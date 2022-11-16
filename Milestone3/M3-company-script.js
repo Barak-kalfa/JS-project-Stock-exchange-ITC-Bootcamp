@@ -3,8 +3,7 @@ const chartData = [];
 const urlData = new URLSearchParams(window.location.search);
 const compSymbol = urlData.toString().slice(7);
 
-async function getString() {
-     
+ function getString() {
      let url = `https://stock-exchange-dot-full-stack-course-services.ew.r.appspot.com/api/v3/company/profile/${compSymbol}`;
      fetch(url)
           .then((res) => {
@@ -19,18 +18,19 @@ async function getString() {
           })
           .catch((err) => console.log(err))
           .then((data) => {
-              
+              let x = document.getElementById("stock-changes");
+            
                document.getElementById("logo").src = data.profile.image;
                document.getElementById("name").innerHTML =
                     data.profile.companyName;
                document.getElementById("info").innerHTML =
-                    data.profile.description;
+                    `<p class="fs-5">${data.profile.description}</p>`;
                document.getElementById("website").href =
                     data.profile.website;
                document.getElementById("stock-price").innerText =
-                    `Stock Price: $${data.profile.price}`;
+                    `Stock Price: $${Number(data.profile.price).toFixed(2)}`;
                document.getElementById("stock-changes").innerText =
-                    `(${data.profile.changesPercentage})`;
+                    `(${Number(data.profile.changesPercentage).toFixed(2)})`;
                if (data.profile.changesPercentage < 0) {
                     document.getElementById("stock-changes").classList.add("text-danger")
                } else {
@@ -45,7 +45,7 @@ async function getChartData() {
           `https://stock-exchange-dot-full-stack-course-services.ew.r.appspot.com/api/v3/historical-price-full/${compSymbol}?serietype=line`
      );
      const responseData = await response.json();
-     //creating X-axis//
+
      for (let i=0; i < responseData.historical.length;  i++) {
         chartDates.push(responseData.historical[i].date)
         chartData.push(responseData.historical[i].close)
